@@ -5,7 +5,7 @@ console.log("working");
 let map = L.map('mapid').setView([30, 30], 2);
 
 // We create the tile layer that will be the background of our map.
-let streets = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/navigation-night-v1/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+let streets = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/streets-v11/tiles/{z}/{x}/{y}?access_token={accessToken}', {
 attribution: 'Map data © <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery (c) <a href="https://www.mapbox.com/">Mapbox</a>',
     maxZoom: 18,
     accessToken: API_KEY
@@ -16,15 +16,25 @@ streets.addTo(map)
 
 
 // Accessing the airport GeoJSON URL
-let airportData = "https://raw.githubusercontent.com/<GitHub_name>/Mapping_Earthquakes/main/majorAirports.json";
+let airportData = "https://raw.githubusercontent.com/AbdullahBera/Mapping_Earthquakes/main/majorAirports.json";
 
 
 // Grabbing our GeoJSON data 
 
-d3.json(airportData).then(function(data) {
+d3.json(airportData).then( function (data) {
   console.log(data);
   // Creating a GeoJSON layer with the retrieved data
-  L.geoJson(data).addTo(map)
+  L.geoJson(data, {
+    // We turn each feature into a marker on the map.
+    onEachFeature: function(feature, layer) {
+      console.log(layer);
+      
+      layer.bindPopup("<h2>Airport Code: " + feature.properties.faa + "</h2> <hr> <h3>Airport Name: " + feature.properties.name + "</h3>");
+    }
+
+  }).addTo(map);
+ 
+
 });
 
 
